@@ -9,24 +9,24 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-public class ConsultandoRegistrosTest {
+public class EntityManagerTest {
 
-    private static EntityManagerFactory entityManagerFactory;
+    protected static EntityManagerFactory entityManagerFactory;
 
-    private EntityManager entityManager;
+    protected EntityManager entityManager;
 
     @BeforeClass
-    public static void setUpBeforeClass(){
+    public static void setUpBeforeClass() {
         entityManagerFactory = Persistence.createEntityManagerFactory("Ecommerce-PU");
     }
 
     @AfterClass
-    public static void tearDownAfterClass(){
+    public static void tearDownAfterClass() {
         entityManagerFactory.close();
     }
 
     @Before
-    public void setUp(){
+    public void setUp() {
         entityManager = entityManagerFactory.createEntityManager();
     }
 
@@ -34,4 +34,6 @@ public class ConsultandoRegistrosTest {
     public void tearDown() {
         entityManager.close();
     }
+
+
 }
