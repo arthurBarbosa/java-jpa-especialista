@@ -42,7 +42,7 @@ public class Pedido {
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
-    @OneToMany
+    @OneToMany(mappedBy = "pedido")
     private List<ItemPedido> itens;
 
 }
