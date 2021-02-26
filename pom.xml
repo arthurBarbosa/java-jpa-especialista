@@ -34,6 +34,14 @@
             <version>1.18.8</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.hibernate.common/hibernate-commons-annotations -->
+        <dependency>
+            <groupId>org.hibernate.common</groupId>
+            <artifactId>hibernate-commons-annotations</artifactId>
+            <version>5.1.0.Final</version>
+        </dependency>
+
     </dependencies>
 
     <build>
