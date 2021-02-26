@@ -25,6 +25,7 @@ public class NotaFiscal {
 
     private String xml;
 
-    @Column(name = "data_emissao")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "data_emissao", nullable = false)
     private Date dataEmissao;
 }
