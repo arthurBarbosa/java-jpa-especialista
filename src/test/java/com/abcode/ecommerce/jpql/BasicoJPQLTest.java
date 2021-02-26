@@ -1,5 +1,6 @@
 package com.abcode.ecommerce.jpql;
 
+import com.abcode.ecommerce.dto.ProdutoDTO;
 import com.abcode.ecommerce.iniciandocomjpa.EntityManagerTest;
 import com.abcode.ecommerce.model.Cliente;
 import com.abcode.ecommerce.model.Pedido;
@@ -41,5 +42,14 @@ public class BasicoJPQLTest extends EntityManagerTest {
         Assert.assertTrue(lista.get(0).length == 2);
 
         lista.forEach(arr -> System.out.println(arr[0] + ", " + arr[1]));
+    }
+
+    @Test
+    public void projetarResultadoDTO() {
+        String jpql = "select new com.abcode.ecommerce.dto.ProdutoDTO(id, nome) from Produto";
+        TypedQuery<ProdutoDTO> typedQuery = entityManager.createQuery(jpql, ProdutoDTO.class);
+        List<ProdutoDTO> lista = typedQuery.getResultList();
+
+        lista.forEach(p -> System.out.println(p.getId() + " " + p.getNome()));
     }
 }
