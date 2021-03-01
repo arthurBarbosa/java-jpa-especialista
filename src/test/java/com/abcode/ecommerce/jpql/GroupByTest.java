@@ -56,8 +56,15 @@ public class GroupByTest extends EntityManagerTest {
     @Test
     public void totaldeVendasPorCliente() {
 
-        String jpql = "select c.nome, sum (ip.precoProduto) from ItemPedido ip " +
-                "join ip.pedido  p  join p.cliente c " +
+//        String jpql = "select c.nome, sum (ip.precoProduto) from ItemPedido ip " +
+//                "join ip.pedido  p  join p.cliente c " +
+//                "group by c.id";
+
+        String jpql = "select c.nome, sum(ip.precoProduto) from ItemPedido ip " +
+                " join ip.pedido p " +
+                "join p.cliente c " +
+                "join ip.pedido p " +
+                "where year(p.dataCriacao) = year(current_date) and month(p.dataCriacao) >= (month(current_date) - 3) " +
                 "group by c.id";
 
         TypedQuery<Object[]> typedQuery = entityManager.createQuery(jpql, Object[].class);
@@ -80,6 +87,23 @@ public class GroupByTest extends EntityManagerTest {
                 "join ip.produto pro " +
                 "join pro.categorias c " +
                 "group by year(p.dataCriacao), month(p.dataCriacao)";
+
+        TypedQuery<Object[]> typedQuery = entityManager.createQuery(jpql, Object[].class);
+
+        List<Object[]> lista = typedQuery.getResultList();
+
+        Assert.assertFalse(lista.isEmpty());
+
+        lista.forEach(arr -> System.out.println(arr[0] + ", " + arr[1]));
+    }
+
+    @Test
+    public void condicionarAgrupamentoComHaving() {
+//         Total de vendas dentre as categorias que mais vendem.
+        String jpql = "select cat.nome, sum(ip.precoProduto) from ItemPedido ip " +
+                " join ip.produto pro join pro.categorias cat " +
+                " group by cat.id " +
+                " having avg(ip.precoProduto) > 1500 ";
 
         TypedQuery<Object[]> typedQuery = entityManager.createQuery(jpql, Object[].class);
 
