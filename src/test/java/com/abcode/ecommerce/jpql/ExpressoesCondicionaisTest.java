@@ -95,4 +95,22 @@ public class ExpressoesCondicionaisTest extends EntityManagerTest {
         Assert.assertFalse(lista.isEmpty());
     }
 
+    @Test
+    public void usarExpressaoCase() {
+        String jpql = "select p.id, " +
+                "case p.status " +
+                "when 'PAGO' then 'Está pago' " +
+                "when 'CANCELADO' then 'Esta cancelado' " +
+                "else 'Está aguardando' " +
+                "end " +
+                "from Pedido p";
+
+        TypedQuery<Object[]> typedQuery = entityManager.createQuery(jpql, Object[].class);
+
+        List<Object[]> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
+        lista.forEach(arr -> System.out.println(arr[0] + ", " + arr[1]));
+    }
+
+
 }
