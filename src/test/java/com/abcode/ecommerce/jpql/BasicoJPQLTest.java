@@ -8,6 +8,7 @@ import com.abcode.ecommerce.model.Produto;
 import org.junit.Assert;
 import org.junit.Test;
 
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
@@ -51,5 +52,33 @@ public class BasicoJPQLTest extends EntityManagerTest {
         List<ProdutoDTO> lista = typedQuery.getResultList();
 
         lista.forEach(p -> System.out.println(p.getId() + " " + p.getNome()));
+    }
+
+    @Test
+    public void ordenarResultados() {
+        String jpql = "select c from Cliente c order by c.nome asc"; // desc
+
+        TypedQuery<Cliente> typedQuery = entityManager.createQuery(jpql, Cliente.class);
+
+        List<Cliente> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
+
+        lista.forEach(c -> System.out.println(c.getId() + ", " + c.getNome()));
+    }
+
+    @Test
+    public void mostrarDiferencaQueries() {
+        String jpql = "select p from Pedido p where p.id = 1";
+
+        TypedQuery<Pedido> typedQuery = entityManager.createQuery(jpql, Pedido.class);
+        Pedido pedido1 = typedQuery.getSingleResult();
+        Assert.assertNotNull(pedido1);
+
+        Query query = entityManager.createQuery(jpql);
+        Pedido pedido2 = (Pedido) query.getSingleResult();
+        Assert.assertNotNull(pedido2);
+
+//        List<Pedido> lista = query.getResultList();
+//        Assert.assertFalse(lista.isEmpty());
     }
 }
