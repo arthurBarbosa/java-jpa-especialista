@@ -55,7 +55,7 @@ public class FuncoesTest extends EntityManagerTest {
     }
 
     @Test
-    public void aplicarFuncaoColecao(){
+    public void aplicarFuncaoColecao() {
         String jpql = "select size(p.itens) from Pedido p where  size(p.itens) > 1 ";
 
         TypedQuery<Integer> typedQuery = entityManager.createQuery(jpql, Integer.class);
@@ -81,6 +81,17 @@ public class FuncoesTest extends EntityManagerTest {
         lista.forEach(obj -> System.out.println(obj));
     }
 
+    @Test
+    public void aplicarFuncaoAgregacao() {
+        // avg, count, min, max sum
+        String jpql = "select sum(p.total) from Pedido p  ";
 
+        TypedQuery<Number> typedQuery = entityManager.createQuery(jpql, Number.class);
+
+        List<Number> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
+
+        lista.forEach(obj -> System.out.println(obj));
+    }
 
 }
