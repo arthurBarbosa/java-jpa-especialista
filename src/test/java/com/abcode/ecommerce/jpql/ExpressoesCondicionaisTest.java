@@ -1,6 +1,7 @@
 package com.abcode.ecommerce.jpql;
 
 import com.abcode.ecommerce.iniciandocomjpa.EntityManagerTest;
+import com.abcode.ecommerce.model.Cliente;
 import com.abcode.ecommerce.model.NotaFiscal;
 import com.abcode.ecommerce.model.Pedido;
 import com.abcode.ecommerce.model.Produto;
@@ -11,6 +12,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -110,6 +112,47 @@ public class ExpressoesCondicionaisTest extends EntityManagerTest {
         List<Object[]> lista = typedQuery.getResultList();
         Assert.assertFalse(lista.isEmpty());
         lista.forEach(arr -> System.out.println(arr[0] + ", " + arr[1]));
+    }
+
+    @Test
+    public void usarExpressaoIn() {
+        List<Integer> paramentros = Arrays.asList(1, 2, 3);
+
+        String jpql = "select p from Pedido  p where p.id in (:lista)";
+
+        TypedQuery<Pedido> typedQuery = entityManager.createQuery(jpql, Pedido.class);
+        typedQuery.setParameter("lista", paramentros);
+        List<Pedido> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
+    }
+
+    @Test
+    public void usarExpressaoInCliente() {
+        Cliente cliente1 = entityManager.find(Cliente.class, 1);
+        Cliente cliente2 = entityManager.find(Cliente.class, 2);
+
+        List<Cliente> clientes = Arrays.asList(cliente1, cliente2);
+
+        String jpql = "select p from Pedido  p where p.cliente in (:clientes)";
+
+        TypedQuery<Pedido> typedQuery = entityManager.createQuery(jpql, Pedido.class);
+        typedQuery.setParameter("clientes", clientes);
+        List<Pedido> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
+    }
+
+    @Test
+    public void usarDistinct(){
+        String jpql = "select distinct p from Pedido p " +
+                " join p.itens i join i.produto pro " +
+                " where pro.id in (1, 2, 3, 4) ";
+
+        TypedQuery<Pedido> typedQuery = entityManager.createQuery(jpql, Pedido.class);
+
+        List<Pedido> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
+
+        System.out.println(lista.size());
     }
 
 
