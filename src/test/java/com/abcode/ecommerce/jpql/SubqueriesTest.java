@@ -108,4 +108,16 @@ public class SubqueriesTest extends EntityManagerTest {
 
         lista.forEach(obj -> System.out.println("ID " + obj.getId() + " total pedido " + obj.getNome()));
     }
+
+    @Test
+    public void pesquisarPedidosComAny() {
+        String jpql = "select p from Produto p " +
+                "where p.preco = ANY (select precoProduto from ItemPedido where produto = p)";
+
+        TypedQuery<Produto> typedQuery = entityManager.createQuery(jpql, Produto.class);
+        List<Produto> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
+
+        lista.forEach(obj -> System.out.println("ID " + obj.getId() + " total pedido " + obj.getNome()));
+    }
 }
