@@ -70,6 +70,42 @@ public class SubqueriesTest extends EntityManagerTest {
         List<Pedido> lista = typedQuery.getResultList();
         Assert.assertFalse(lista.isEmpty());
 
-        lista.forEach(obj -> System.out.println("ID " + obj.getId() + " total pedido " + obj.getTotal() + " nome do cliente " +obj.getCliente().getNome()));
+        lista.forEach(obj -> System.out.println("ID " + obj.getId() + " total pedido " + obj.getTotal() + " nome do cliente " + obj.getCliente().getNome()));
+    }
+
+    @Test
+    public void pesquisarPedidosComExists() {
+        String jpql = "select p from Produto p where exists " +
+                " (select 1 from ItemPedido itemPedido join itemPedido.produto produto where produto = p )";
+
+        TypedQuery<Produto> typedQuery = entityManager.createQuery(jpql, Produto.class);
+        List<Produto> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
+
+        lista.forEach(obj -> System.out.println("ID " + obj.getId() + " total pedido " + obj.getNome()));
+    }
+
+    @Test
+    public void pesquisarPedidosComNotExists() {
+        String jpql = "select p from Produto p where not exists " +
+                " (select 1 from ItemPedido itemPedido join itemPedido.produto produto where produto = p )";
+
+        TypedQuery<Produto> typedQuery = entityManager.createQuery(jpql, Produto.class);
+        List<Produto> lista = typedQuery.getResultList();
+        Assert.assertTrue(lista.isEmpty());
+
+        lista.forEach(obj -> System.out.println("ID " + obj.getId() + " total pedido " + obj.getNome()));
+    }
+
+    @Test
+    public void pesquisarPedidosComAll() {
+        String jpql = "select p from Produto p where " +
+                " p.preco = ALL (select precoProduto from ItemPedido where produto = p)";
+
+        TypedQuery<Produto> typedQuery = entityManager.createQuery(jpql, Produto.class);
+        List<Produto> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
+
+        lista.forEach(obj -> System.out.println("ID " + obj.getId() + " total pedido " + obj.getNome()));
     }
 }
