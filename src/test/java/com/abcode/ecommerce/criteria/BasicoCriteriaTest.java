@@ -1,6 +1,7 @@
 package com.abcode.ecommerce.criteria;
 
 import com.abcode.ecommerce.iniciandocomjpa.EntityManagerTest;
+import com.abcode.ecommerce.model.Cliente;
 import com.abcode.ecommerce.model.Pedido;
 import org.junit.Assert;
 import org.junit.Test;
@@ -9,6 +10,8 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
 
 public class BasicoCriteriaTest extends EntityManagerTest {
 
@@ -28,4 +31,42 @@ public class BasicoCriteriaTest extends EntityManagerTest {
         Assert.assertNotNull(pedido);
 
     }
+
+    @Test
+    public void selecionandoUmAtributoParaRetorno(){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<BigDecimal> criteriaQuery = criteriaBuilder.createQuery(BigDecimal.class);
+        Root<Pedido> root = criteriaQuery.from(Pedido.class);
+
+        criteriaQuery.select(root.get("total"));
+
+        criteriaQuery.where(criteriaBuilder.equal(root.get("id"), 1));
+
+        TypedQuery<BigDecimal> typedQuery = entityManager.createQuery(criteriaQuery);
+        BigDecimal total = typedQuery.getSingleResult();
+        Assert.assertEquals(new BigDecimal("2398.00"), total);
+    }
+
+    @Test
+    public void selecionandoUmClienteParaRetorno(){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Cliente> criteriaQuery = criteriaBuilder.createQuery(Cliente.class);
+        Root<Pedido> root = criteriaQuery.from(Pedido.class);
+
+        criteriaQuery.select(root.get("cliente"));
+        criteriaQuery.where(criteriaBuilder.equal(root.get("id"), 1));
+
+        TypedQuery<Cliente> typedQuery = entityManager.createQuery(criteriaQuery);
+        Cliente cliente = typedQuery.getSingleResult();
+        Assert.assertEquals("Fernando Medeiros", cliente.getNome());
+    }
 }
+
+
+
+
+
+
+
+
+
