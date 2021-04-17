@@ -3,6 +3,7 @@ package com.abcode.ecommerce.criteria;
 import com.abcode.ecommerce.iniciandocomjpa.EntityManagerTest;
 import com.abcode.ecommerce.model.Cliente;
 import com.abcode.ecommerce.model.Pedido;
+import com.abcode.ecommerce.model.Produto;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -12,6 +13,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.util.List;
 
 public class BasicoCriteriaTest extends EntityManagerTest {
 
@@ -59,6 +61,19 @@ public class BasicoCriteriaTest extends EntityManagerTest {
         TypedQuery<Cliente> typedQuery = entityManager.createQuery(criteriaQuery);
         Cliente cliente = typedQuery.getSingleResult();
         Assert.assertEquals("Fernando Medeiros", cliente.getNome());
+    }
+
+    @Test
+    public void retornarTodosOsProdutos(){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Produto> criteriaQuery = criteriaBuilder.createQuery(Produto.class);
+        Root<Produto> root = criteriaQuery.from(Produto.class);
+
+        criteriaQuery.select(root);
+
+        TypedQuery<Produto> typedQuery = entityManager.createQuery(criteriaQuery);
+        List<Produto> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
     }
 }
 
