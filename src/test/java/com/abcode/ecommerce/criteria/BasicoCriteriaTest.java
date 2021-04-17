@@ -1,5 +1,6 @@
 package com.abcode.ecommerce.criteria;
 
+import com.abcode.ecommerce.dto.ProdutoDTO;
 import com.abcode.ecommerce.iniciandocomjpa.EntityManagerTest;
 import com.abcode.ecommerce.model.Cliente;
 import com.abcode.ecommerce.model.Pedido;
@@ -122,6 +123,24 @@ public class BasicoCriteriaTest extends EntityManagerTest {
 
         Assert.assertFalse(lista.isEmpty());
         lista.forEach(tuple -> System.out.println("Id: " + tuple.get("id") + " nome: " + tuple.get("nome")));
+    }
+
+    @Test
+    public void projetarResultadoUsandoDTO() {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<ProdutoDTO> criteriaQuery = criteriaBuilder.createQuery(ProdutoDTO.class);
+        Root<Produto> root = criteriaQuery.from(Produto.class);
+
+        criteriaQuery.select(criteriaBuilder
+                .construct(ProdutoDTO.class,
+                        root.get("id"),
+                        root.get("nome")));
+
+        TypedQuery<ProdutoDTO> typedQuery = entityManager.createQuery(criteriaQuery);
+        List<ProdutoDTO> lista = typedQuery.getResultList();
+
+        Assert.assertFalse(lista.isEmpty());
+        lista.forEach(prod -> System.out.println(" id " + prod.getId() + " nome "+ prod.getNome()));
     }
 }
 
