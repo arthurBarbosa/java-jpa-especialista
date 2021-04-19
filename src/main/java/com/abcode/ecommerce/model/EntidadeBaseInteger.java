@@ -14,7 +14,7 @@ import javax.persistence.MappedSuperclass;
 @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @MappedSuperclass
-public class EntidadeBaseIntege {
+public class EntidadeBaseInteger {
 
     @EqualsAndHashCode.Include
     @Id

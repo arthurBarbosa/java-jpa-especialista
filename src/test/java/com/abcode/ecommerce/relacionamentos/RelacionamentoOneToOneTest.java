@@ -8,6 +8,7 @@ import com.abcode.ecommerce.model.StatusPagamento;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 public class RelacionamentoOneToOneTest extends EntityManagerTest {
@@ -39,7 +40,7 @@ public class RelacionamentoOneToOneTest extends EntityManagerTest {
         Pedido pedido = entityManager.find(Pedido.class, 1);
 
         NotaFiscal notaFiscal = new NotaFiscal();
-        notaFiscal.setXml("TESTE");
+        notaFiscal.setXml("TESTE".getBytes(StandardCharsets.UTF_8));
         notaFiscal.setDataEmissao(new Date());
         notaFiscal.setPedido(pedido);
 

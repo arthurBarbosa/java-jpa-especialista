@@ -1,5 +1,7 @@
 package com.abcode.ecommerce.model;
 
+import com.abcode.ecommerce.listener.GenericoListener;
+import com.abcode.ecommerce.listener.GerarNotaFiscalListener;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,27 +13,23 @@ import java.util.List;
 
 @Getter
 @Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EntityListeners({ GerarNotaFiscalListener.class, GenericoListener.class })
 @Entity
 @Table(name = "pedido")
-public class Pedido {
-
-    @EqualsAndHashCode.Include
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class Pedido extends EntidadeBaseInteger {
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "cliente_id")
+    @JoinColumn(name = "cliente_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_pedido_cliente"))
     private Cliente cliente;
 
     @OneToMany(mappedBy = "pedido")
     private List<ItemPedido> itens;
 
-    @Column(name = "data_criacao")
+    @Column(name = "data_criacao", updatable = false, nullable = false)
     private LocalDateTime dataCriacao;
 
-    @Column(name = "data_ultima_atualizacao")
+    @Column(name = "data_ultima_atualizacao", insertable = false)
     private LocalDateTime dataUltimaAtualizacao;
 
     @Column(name = "data_conclusao")
@@ -40,13 +38,15 @@ public class Pedido {
     @OneToOne(mappedBy = "pedido")
     private NotaFiscal notaFiscal;
 
+    @Column(nullable = false)
     private BigDecimal total;
 
+    @Column(length = 30, nullable = false)
     @Enumerated(EnumType.STRING)
     private StatusPedido status;
 
     @OneToOne(mappedBy = "pedido")
-    private PagamentoCartao pagamento;
+    private Pagamento pagamento;
 
     @Embedded
     private EnderecoEntregaPedido enderecoEntrega;
@@ -55,10 +55,15 @@ public class Pedido {
         return StatusPedido.PAGO.equals(status);
     }
 
+    //    @PrePersist
+//    @PreUpdate
     public void calcularTotal() {
         if (itens != null) {
-            total = itens.stream().map(ItemPedido::getPrecoProduto)
+            total = itens.stream().map(
+                    i -> new BigDecimal(i.getQuantidade()).multiply(i.getPrecoProduto()))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
+        } else {
+            total = BigDecimal.ZERO;
         }
     }
 
