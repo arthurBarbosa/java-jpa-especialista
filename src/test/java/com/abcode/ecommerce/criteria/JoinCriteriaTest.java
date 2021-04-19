@@ -64,4 +64,21 @@ public class JoinCriteriaTest extends EntityManagerTest {
         Assert.assertNotNull(pedido);
         Assert.assertFalse(pedido.getItens().isEmpty());
     }
+
+    @Test
+    public void buscarPedidosComProdutoEspecifico() {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Pedido> criteriaQuery = criteriaBuilder.createQuery(Pedido.class);
+        Root<Pedido> root = criteriaQuery.from(Pedido.class);
+        Join<ItemPedido, Produto> pedidoProdutoJoin = root.join("itens").join("produto");
+
+        criteriaQuery.select(root);
+
+        criteriaQuery.where(criteriaBuilder.equal(pedidoProdutoJoin.get("id"), 1));
+
+        TypedQuery<Pedido> typedQuery = entityManager.createQuery(criteriaQuery);
+        List<Pedido> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
+
+    }
 }
