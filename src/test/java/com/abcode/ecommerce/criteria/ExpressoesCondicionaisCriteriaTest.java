@@ -12,6 +12,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.math.BigDecimal;
 import java.util.List;
 
 public class ExpressoesCondicionaisCriteriaTest extends EntityManagerTest {
@@ -31,7 +32,7 @@ public class ExpressoesCondicionaisCriteriaTest extends EntityManagerTest {
     }
 
     @Test
-    public void usarIsNull(){
+    public void usarIsNull() {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Produto> criteriaQuery = criteriaBuilder.createQuery(Produto.class);
         Root<Produto> root = criteriaQuery.from(Produto.class);
@@ -46,7 +47,7 @@ public class ExpressoesCondicionaisCriteriaTest extends EntityManagerTest {
     }
 
     @Test
-    public void usarIsNullProdutoSemCategoria(){
+    public void usarIsNullProdutoSemCategoria() {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Produto> criteriaQuery = criteriaBuilder.createQuery(Produto.class);
         Root<Produto> root = criteriaQuery.from(Produto.class);
@@ -60,7 +61,7 @@ public class ExpressoesCondicionaisCriteriaTest extends EntityManagerTest {
     }
 
     @Test
-    public void usarIsNullProdutoComCategoria(){
+    public void usarIsNullProdutoComCategoria() {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Produto> criteriaQuery = criteriaBuilder.createQuery(Produto.class);
         Root<Produto> root = criteriaQuery.from(Produto.class);
@@ -71,5 +72,62 @@ public class ExpressoesCondicionaisCriteriaTest extends EntityManagerTest {
         TypedQuery<Produto> typedQuery = entityManager.createQuery(criteriaQuery);
         List<Produto> lista = typedQuery.getResultList();
         Assert.assertFalse(lista.isEmpty());
+    }
+
+    @Test
+    public void usarMaiorMenor() {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Produto> criteriaQuery = criteriaBuilder.createQuery(Produto.class);
+        Root<Produto> root = criteriaQuery.from(Produto.class);
+
+        criteriaQuery.select(root);
+        criteriaQuery.where(criteriaBuilder.greaterThanOrEqualTo(root.get(Produto_.PRECO), new BigDecimal(799)));
+
+        TypedQuery<Produto> typedQuery = entityManager.createQuery(criteriaQuery);
+        List<Produto> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
+        for (Produto produto : lista) {
+            System.out.println("Id " + produto.getId() + " nome: " + produto.getNome() + " preço " + produto.getPreco());
+        }
+    }
+
+    @Test
+    public void usarMenor() {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Produto> criteriaQuery = criteriaBuilder.createQuery(Produto.class);
+        Root<Produto> root = criteriaQuery.from(Produto.class);
+
+        criteriaQuery.select(root);
+        criteriaQuery.where(criteriaBuilder
+                .lessThan(root.get(Produto_.PRECO), new BigDecimal(3500)));
+
+        TypedQuery<Produto> typedQuery = entityManager.createQuery(criteriaQuery);
+        List<Produto> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
+        for (Produto produto : lista) {
+            System.out.println("Id " + produto.getId() + " nome: " + produto.getNome() + " preço " + produto.getPreco());
+        }
+    }
+
+    @Test
+    public void usarMenorEAnd() {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Produto> criteriaQuery = criteriaBuilder.createQuery(Produto.class);
+        Root<Produto> root = criteriaQuery.from(Produto.class);
+
+        criteriaQuery.select(root);
+
+        criteriaQuery.where(
+                criteriaBuilder
+                        .greaterThan(root.get(Produto_.PRECO), new BigDecimal(799)),
+                criteriaBuilder
+                        .lessThan(root.get(Produto_.PRECO), new BigDecimal(3500)));
+
+        TypedQuery<Produto> typedQuery = entityManager.createQuery(criteriaQuery);
+        List<Produto> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
+        for (Produto produto : lista) {
+            System.out.println("Id " + produto.getId() + " nome: " + produto.getNome() + " preço " + produto.getPreco());
+        }
     }
 }
