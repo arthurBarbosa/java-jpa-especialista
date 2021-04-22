@@ -103,4 +103,20 @@ public class Pedido extends EntidadeBaseInteger {
     public void aoCarregar() {
         System.out.println("Após carregar o Pedido.");
     }
+
+    @Override
+    public String toString() {
+        return "Pedido{" +
+                "cliente=" + cliente +
+                ", itens=" + itens +
+                ", dataCriacao=" + dataCriacao +
+                ", dataUltimaAtualizacao=" + dataUltimaAtualizacao +
+                ", dataConclusao=" + dataConclusao +
+                ", notaFiscal=" + notaFiscal +
+                ", total=" + total +
+                ", status=" + status +
+                ", pagamento=" + pagamento +
+                ", enderecoEntrega=" + enderecoEntrega +
+                '}';
+    }
 }
