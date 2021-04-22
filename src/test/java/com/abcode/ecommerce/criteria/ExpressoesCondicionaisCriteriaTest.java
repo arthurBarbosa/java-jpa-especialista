@@ -5,6 +5,7 @@ import com.abcode.ecommerce.model.*;
 import com.abcode.ecommerce.model.Cliente_;
 import com.abcode.ecommerce.model.Pedido_;
 import com.abcode.ecommerce.model.Produto_;
+import com.mysql.cj.xdevapi.CreateIndexParams;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -191,6 +192,79 @@ public class ExpressoesCondicionaisCriteriaTest extends EntityManagerTest {
         criteriaQuery.select(root);
 
         criteriaQuery.where(criteriaBuilder.notEqual(root.get(Pedido_.TOTAL), new BigDecimal(499)));
+
+        TypedQuery<Pedido> typedQuery = entityManager.createQuery(criteriaQuery);
+        List<Pedido> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
+        lista.forEach(p -> System.out.println("Id: " + p.getId() + " total " + p.getTotal()));
+    }
+
+    @Test
+    public void usandoOperadoresLogicos() {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Pedido> criteriaQuery = criteriaBuilder.createQuery(Pedido.class);
+        Root<Pedido> root = criteriaQuery.from(Pedido.class);
+
+        criteriaQuery.where(
+                criteriaBuilder.greaterThan(root.get(Pedido_.TOTAL), new BigDecimal(499)),
+                criteriaBuilder.equal(root.get(Pedido_.STATUS), StatusPedido.PAGO));
+
+        TypedQuery<Pedido> typedQuery = entityManager.createQuery(criteriaQuery);
+        List<Pedido> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
+        lista.forEach(p -> System.out.println("Id: " + p.getId() + " total " + p.getTotal()));
+    }
+
+    @Test
+    public void usandoOperadoresLogicosComAndExplicito() {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Pedido> criteriaQuery = criteriaBuilder.createQuery(Pedido.class);
+        Root<Pedido> root = criteriaQuery.from(Pedido.class);
+
+        criteriaQuery.where(
+                criteriaBuilder.and(
+                        criteriaBuilder.greaterThan(root.get(Pedido_.TOTAL), new BigDecimal(499)),
+                        criteriaBuilder.equal(root.get(Pedido_.STATUS), StatusPedido.PAGO)));
+
+        TypedQuery<Pedido> typedQuery = entityManager.createQuery(criteriaQuery);
+        List<Pedido> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
+        lista.forEach(p -> System.out.println("Id: " + p.getId() + " total " + p.getTotal()));
+    }
+
+    @Test
+    public void usandoOperadoresLogicosComAndExplicitoComData() {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Pedido> criteriaQuery = criteriaBuilder.createQuery(Pedido.class);
+        Root<Pedido> root = criteriaQuery.from(Pedido.class);
+
+        criteriaQuery.where(
+                criteriaBuilder.and(
+                        criteriaBuilder.greaterThan(root.get(Pedido_.TOTAL), new BigDecimal(499)),
+                        criteriaBuilder.equal(root.get(Pedido_.STATUS), StatusPedido.PAGO)),
+                criteriaBuilder.greaterThan(root.get(Pedido_.DATA_CRIACAO), LocalDateTime.now().minusDays(5))
+        );
+
+        TypedQuery<Pedido> typedQuery = entityManager.createQuery(criteriaQuery);
+        List<Pedido> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
+        lista.forEach(p -> System.out.println("Id: " + p.getId() + " total " + p.getTotal()));
+    }
+
+    @Test
+    public void usandoOperadoresLogicosComOrExplicitoComData() {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Pedido> criteriaQuery = criteriaBuilder.createQuery(Pedido.class);
+        Root<Pedido> root = criteriaQuery.from(Pedido.class);
+
+        criteriaQuery.where(
+                criteriaBuilder.or(
+                        criteriaBuilder.equal(root.get(Pedido_.STATUS), StatusPedido.AGUARDANDO),
+
+                        criteriaBuilder.equal(root.get(Pedido_.STATUS), StatusPedido.PAGO)),
+
+                criteriaBuilder.greaterThan(root.get(Pedido_.TOTAL), new BigDecimal(499))
+        );
 
         TypedQuery<Pedido> typedQuery = entityManager.createQuery(criteriaQuery);
         List<Pedido> lista = typedQuery.getResultList();
