@@ -271,4 +271,18 @@ public class ExpressoesCondicionaisCriteriaTest extends EntityManagerTest {
         Assert.assertFalse(lista.isEmpty());
         lista.forEach(p -> System.out.println("Id: " + p.getId() + " total " + p.getTotal()));
     }
+
+    @Test
+    public void ordenarResultados(){
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Cliente> criteriaQuery = criteriaBuilder.createQuery(Cliente.class);
+        Root<Cliente> root = criteriaQuery.from(Cliente.class);
+
+        criteriaQuery.orderBy(criteriaBuilder.asc(root.get(Cliente_.NOME)));
+
+        TypedQuery<Cliente> typedQuery = entityManager.createQuery(criteriaQuery);
+        List<Cliente> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
+        lista.forEach(p -> System.out.println("Id" + p.getId() + " nome: " +  p.getNome()));
+    }
 }
