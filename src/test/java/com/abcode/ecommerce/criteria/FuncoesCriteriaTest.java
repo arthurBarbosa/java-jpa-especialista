@@ -3,6 +3,8 @@ package com.abcode.ecommerce.criteria;
 import com.abcode.ecommerce.iniciandocomjpa.EntityManagerTest;
 import com.abcode.ecommerce.model.Cliente;
 import com.abcode.ecommerce.model.Cliente_;
+import com.abcode.ecommerce.model.Pedido;
+import com.abcode.ecommerce.model.Pedido_;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -49,5 +51,73 @@ public class FuncoesCriteriaTest extends EntityManagerTest {
                         + ", upper: " + arr[6]
                         + ", trim: |" + arr[7] + "|"));
     }
-}
 
+    @Test
+    public void aplicarFuncaoData() {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Object[]> criteriaQuery = criteriaBuilder.createQuery(Object[].class);
+        Root<Pedido> root = criteriaQuery.from(Pedido.class);
+
+        criteriaQuery.multiselect(
+                root.get(Pedido_.ID),
+                root.get(Pedido_.CLIENTE).get(Cliente_.NOME),
+                criteriaBuilder.currentDate(),
+                criteriaBuilder.currentTime(),
+                criteriaBuilder.currentTimestamp()
+        );
+
+        TypedQuery<Object[]> typedQuery = entityManager.createQuery(criteriaQuery);
+        List<Object[]> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
+
+        lista.forEach(p -> System.out.println(p[0]
+                + ", current_date: " + p[1]
+                + ", current_time: " + p[2]
+                + ", current_timestamp: " + p[3]));
+    }
+
+    @Test
+    public void aplicarFuncaoColecao() {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Object[]> criteriaQuery = criteriaBuilder.createQuery(Object[].class);
+        Root<Pedido> root = criteriaQuery.from(Pedido.class);
+
+        criteriaQuery.multiselect(
+                root.get(Pedido_.ID),
+                criteriaBuilder.size(root.get(Pedido_.ITENS)));
+
+        criteriaQuery.where(
+                criteriaBuilder.greaterThan(
+                        criteriaBuilder.size(root.get(Pedido_.ITENS)), 1));
+
+        TypedQuery<Object[]> typedQuery = entityManager.createQuery(criteriaQuery);
+        List<Object[]> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
+
+        lista.forEach(p -> System.out.println(p[0] + ", size " + p[1]));
+    }
+
+    @Test
+    public void aplicarFuncaoAgregacao() {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Object[]> criteriaQuery = criteriaBuilder.createQuery(Object[].class);
+        Root<Pedido> root = criteriaQuery.from(Pedido.class);
+
+        criteriaQuery.multiselect(
+                criteriaBuilder.count(root.get(Pedido_.ID)),
+                criteriaBuilder.avg(root.get(Pedido_.TOTAL)),
+                criteriaBuilder.sum(root.get(Pedido_.TOTAL)),
+                criteriaBuilder.min(root.get(Pedido_.TOTAL)),
+                criteriaBuilder.max(root.get(Pedido_.TOTAL)));
+
+        TypedQuery<Object[]> typedQuery = entityManager.createQuery(criteriaQuery);
+        List<Object[]> lista = typedQuery.getResultList();
+        Assert.assertFalse(lista.isEmpty());
+
+        lista.forEach(p -> System.out.println("count: " + p[0] +
+                ", avg: " + p[1] +
+                ", sum: " + p[2] +
+                ", min: " + p[3] +
+                ", max: " + p[4]));
+    }
+}
